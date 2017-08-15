@@ -170,8 +170,9 @@ class FilterIPerf(wx.Frame):
         plyt.title(filename_to_write)
         plyt.xlabel("Time(S)")
         plyt.ylabel("Speed(Mbits)")
-        plyt.plot(data_x, data_y, color='red')
+        #plyt.plot(data_x, data_y, color='red')
         plyt.plot(data_x, numpy.array(data_list_jige), color='blue')
+        plyt.scatter(data_x, data_y, 10)
 
         middle_location_data = int(length / 2)
         end_location = int(length / 3 * 2)

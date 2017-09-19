@@ -161,9 +161,13 @@ class FilterIPerf(wx.Frame):
             data_time.append(item)
         data_x = numpy.array(data_time)
         data_y = numpy.array(list_data)
+        average_data = sum(list_data) / length
         data_list_jige = []
+        data_list_average = []
         for count in range(len(list_data)):
             data_list_jige.append(jigexian)
+        for count in range(len(list_data)):
+            data_list_average.append(average_data)
         filename_to_write = 'Iperf_Filter_Result-%s'.decode('gbk') % time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time()))
         figure_to_show = plyt.figure(filename_to_write)
         figure_sub = figure_to_show.add_subplot(111)
@@ -172,6 +176,7 @@ class FilterIPerf(wx.Frame):
         plyt.ylabel("Speed(Mbits)")
         #plyt.plot(data_x, data_y, color='red')
         plyt.plot(data_x, numpy.array(data_list_jige), color='blue')
+        plyt.plot(data_x, numpy.array(data_list_average), color='red')
         plyt.scatter(data_x, data_y, 10)
 
         middle_location_data = int(length / 2)
@@ -179,6 +184,7 @@ class FilterIPerf(wx.Frame):
 
         figure_sub.annotate('Lowest(x,y) = (%s,%s)' % (index_lowest, data_lowest), xy=(index_lowest, data_lowest), xytext=(index_lowest, data_lowest))
         figure_sub.annotate('Pass_Line = %s' % jigexian, xy=(middle_location_data, jigexian), xytext=(end_location, jigexian))
+        figure_sub.annotate('Average_Line = %s' % average_data, xy=(middle_location_data, average_data), xytext=(end_location, average_data))
         filename_to_write_all = filename_to_write + '_image.png'
         figure_to_show.savefig(filename_to_write_all)
         diag_finish = wx.MessageDialog(None, '处理结果已经保存到文件《%s》中.如果无需其他动作，请点击退出按钮退出程序'.decode('gbk') % (filename_to_write_all), '提示'.decode('gbk'), wx.OK | wx.ICON_INFORMATION | wx.STAY_ON_TOP)

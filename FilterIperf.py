@@ -14,7 +14,7 @@ filename_iperf = ''
 class FilterIPerf(wx.Frame):
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Iperf测试结果过滤工具", pos=wx.DefaultPosition,
-                          size=wx.Size(343, 334), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+                          size=wx.Size(343, 407), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
         self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT))
@@ -93,6 +93,22 @@ class FilterIPerf(wx.Frame):
         bSizer7.Add(bSizer10, 1, wx.EXPAND, 5)
 
         bSizer1.Add(bSizer7, 0, wx.EXPAND, 5)
+
+        bSizer11 = wx.BoxSizer(wx.VERTICAL)
+
+        self.m_staticText7 = wx.StaticText(self, wx.ID_ANY, u"请选择测试结果来自哪种系统", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_staticText7.Wrap(-1)
+        self.m_staticText7.SetForegroundColour(wx.Colour(255, 0, 0))
+        self.m_staticText7.SetBackgroundColour(wx.Colour(255, 255, 0))
+
+        bSizer11.Add(self.m_staticText7, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
+
+        combox_systemChoices = [u"Windows", u"Linux"]
+        self.combox_system = wx.ComboBox(self, wx.ID_ANY, u"Windows", wx.DefaultPosition, wx.DefaultSize,
+                                         combox_systemChoices, 0)
+        bSizer11.Add(self.combox_system, 0, wx.ALL, 5)
+
+        bSizer1.Add(bSizer11, 0, wx.EXPAND, 5)
 
         bSizer5 = wx.BoxSizer(wx.VERTICAL)
 
@@ -193,8 +209,14 @@ class FilterIPerf(wx.Frame):
     def show_all(self, event):
         print time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         self.button_show_all.Disable()
-        handler_iperf = open(filename_iperf, mode='r')
+        os_version = self.combox_system.GetValue().lower()
+        #if os_version == "windows":
+        handler_iperf = open(filename_iperf, mode='rU')
+        #else:
+        #    handler_iperf = open(filename_iperf, mode='rb')
         all_line_iperf = handler_iperf.readlines()
+        print all_line_iperf
+        # print all_line_iperf
         list_data_iperf = []
         mode_thread = self.combox_thread.GetValue()
         speed = self.combox_speed.GetValue()
@@ -202,9 +224,11 @@ class FilterIPerf(wx.Frame):
         for line in all_line_iperf:
             if mode_thread == '多线程'.decode('gbk'):
                 if re.search(r'SUM', line):
+                    # print 1
                     data_speed = re.search(r'(\d*.\d*)\s*([a-zA-Z])[a-zA-Z]*/sec', line)
                     if data_speed is not None:
                         number_speed = data_speed.groups()[0]
+                        # print number_speed
                         unit_speed = data_speed.groups()[1]
                         if unit_speed == 'G':
                             number_speed_write = float(number_speed) * 1000
